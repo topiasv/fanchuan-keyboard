@@ -517,8 +517,7 @@ InputHandler {
     function clearPreedit() {
         //Skips reset when switching character set
         if (glyphSwap) {
-            glyphSwap = false;
-            refreshCandidates()
+            glyphSwap = false
             return
         }
 
