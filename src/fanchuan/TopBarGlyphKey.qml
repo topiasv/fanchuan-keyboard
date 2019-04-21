@@ -6,14 +6,16 @@ import "../.."
 
 Item {
     id: switchCharKey
+    property bool leftAlign: false
     height: Theme.itemSizeSmall
-    width: height * 0.7
+    width: height * 0.9
     Rectangle {
         id: switchbg
+        width: parent.width * 0.8
+        height: parent.height * 0.8
         anchors {
-            fill: parent
-            topMargin: Theme.paddingMedium
-            bottomMargin: Theme.paddingMedium
+            left: leftAlign ? parent.left : undefined
+            verticalCenter: parent.verticalCenter
         }
         color: switchButton.pressed ? Theme.highlightBackgroundColor : Theme.primaryColor
         opacity: switchButton.pressed ? 0.6 : 0.3
@@ -39,6 +41,10 @@ Item {
         id: switchKeyText
         height: parent.height
         width: parent.width
+        anchors {
+            verticalCenter: switchbg.verticalCenter
+            horizontalCenter: switchbg.horizontalCenter
+        }
         text: (layoutRow.layout.inputMode === "traditional" ? "繁" : "简")
         maximumLineCount: 1
         color: switchButton.pressed ? Theme.highlightColor : Theme.primaryColor

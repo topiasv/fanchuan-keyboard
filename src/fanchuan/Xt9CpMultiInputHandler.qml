@@ -94,7 +94,11 @@ InputHandler {
 
                     model: composingEnabled ? xt9CpModel : 0
                     orientation: ListView.Horizontal
-                    width: parent.width
+                    clip: true
+                    anchors {
+                        left: parent.left
+                        right: switchGlyphKey.left
+                    }
                     height: parent.height
                     boundsBehavior: ((!keyboard.expandedPaste && Clipboard.hasText) || handler.hasMore)
                                     ? Flickable.DragOverBounds : Flickable.StopAtBounds
@@ -171,10 +175,12 @@ InputHandler {
                 }
 
                 TopBarGlyphKey {
+                    id: switchGlyphKey
+                    leftAlign: true
                     anchors {
                         right: parent.right
                         verticalCenter: parent.verticalCenter
-                        rightMargin: Theme.paddingMedium
+                        rightMargin: Theme.paddingTiny
                     }
                 }
             }
@@ -297,10 +303,11 @@ InputHandler {
                 }
 
                 TopBarGlyphKey {
+                    width: Theme.itemSizeSmall
+                    height: width * 0.9
                     anchors {
                         right: parent.right
                         bottom: parent.bottom
-                        rightMargin: Theme.paddingMedium
                     }
                 }
             }
