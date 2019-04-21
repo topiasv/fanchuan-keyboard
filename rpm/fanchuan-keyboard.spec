@@ -1,5 +1,5 @@
 Name: fanchuan-keyboard
-Version: 0.0.1
+Version: 0.1.0
 Release: 1%{?dist}
 Summary: A Chinese keyboard suite for Sailfish OS
 License: LGPL2.1
