@@ -1,0 +1,7 @@
+port=12000
+
+[fanchuan]
+path = /PATH/TO/YOUR/FOLDER/fanchuan-keyboard/src/
+comment = fanchuan keyboard
+read only = true
+use chroot = false
