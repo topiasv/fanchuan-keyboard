@@ -1,3 +1,6 @@
 .mb2
 documentation.list
 RPMS
+rsyncd.conf
+.vscode/
+

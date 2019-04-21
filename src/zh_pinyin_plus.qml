@@ -85,7 +85,7 @@ KeyboardLayout {
             caption: keyboard.inSymView ? "拼音" : symbolString // symbols/pinyin
         }
 
-        SetGlyphKey {}
+        //SetGlyphKey {}
 
         ChineseContextAwareCommaKey {}
 

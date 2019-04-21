@@ -1,7 +1,7 @@
 Name: fanchuan-keyboard
 Version: 0.0.1
 Release: 1%{?dist}
-Summary: A Chinese keyboard suite
+Summary: A Chinese keyboard suite for Sailfish OS
 License: LGPL2.1
 Source: %{name}-%{version}.tar.gz
 BuildArch: noarch
@@ -13,7 +13,7 @@ Requires:   opencc-qml-plugin
 
 %description
 Fanchuan keyboard is a Chinese keyboard suite for
-Sailfish that provides many different Chinese input
+Sailfish OS that provides many different Chinese input
 layouts in one package.
 
 Fanchuan means sailboat in Mandarin Chinese.
