@@ -4,11 +4,21 @@ import com.jolla.keyboard 1.0
 import com.jolla.xt9cp 1.0
 import Sailfish.Silica 1.0
 import org.nemomobile.configuration 1.0
+import net.toxip.openccqml 1.0
 import "../.."
 import ".."
 
 InputHandler {
     id: handler
+
+    property string inputMode: layoutRow.layout ? layoutRow.layout.inputMode : ""
+    property bool isSimplified: inputMode === "simplified"
+
+    OpenCC {
+        id: opencc
+
+        Component.onCompleted: opencc.chooseMode("s2tw")
+    }
 
     Xt9CpModel {
         id: xt9CpModel
@@ -18,7 +28,7 @@ InputHandler {
 
         fetchCount: fetchMany ? 120 : 20
         mohuEnabled: mohuConfig.value
-        inputMode: layoutRow.layout ? layoutRow.layout.inputMode : ""
+        inputMode: layoutRow.layout ? "simplified" : ""
         inputMethod: layoutRow.layout ? layoutRow.layout.type : ""
 
         onInputMethodChanged: handler.clearPreedit()
@@ -119,7 +129,7 @@ InputHandler {
                             color: (backGround.down || (index === 0 && xt9CpModel.inputString.length > 0))
                                    ? Theme.highlightColor : Theme.primaryColor
                             font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-                            text: model.text
+                            text: isSimplified ? model.text : opencc.convert(model.text)
                         }
                     }
                     onDraggingChanged: {
@@ -160,57 +170,11 @@ InputHandler {
                     }
                 }
 
-                Item {
-                    id: switchCharKey
+                TopBarGlyphKey {
                     anchors {
                         right: parent.right
                         verticalCenter: parent.verticalCenter
                         rightMargin: Theme.paddingMedium
-                    }
-                    height: parent.height
-                    width: height * 0.7
-                    
-                    Rectangle {
-                        id: switchbg
-                        anchors {
-                            fill: parent
-                            topMargin: Theme.paddingMedium
-                            bottomMargin: Theme.paddingMedium
-                        }
-                        color: switchButton.pressed ? Theme.highlightBackgroundColor : Theme.primaryColor
-                        opacity: switchButton.pressed ? 0.6 : 0.3
-                        radius: geometry.keyRadius
-
-                        MouseArea {
-                            id: switchButton
-                            anchors.fill: parent
-
-                            onClicked: {
-                                if (layoutRow.layout.inputMode === "simplified") {
-                                    layoutRow.layout.inputMode = "traditional"
-                                } else if (layoutRow.layout.inputMode === "traditional") {
-                                    layoutRow.layout.inputMode = "simplified"
-                                }
-                                // disables model reset
-                                glyphSwap = true
-                            }
-                        }
-                    }
-
-                    Label {
-                        id: switchKeyText
-                        height: parent.height
-                        width: parent.width
-                        text: (layoutRow.layout.inputMode === "traditional" ? "繁" : "简")
-                        maximumLineCount: 1
-                        color: switchButton.pressed ? Theme.highlightColor : Theme.primaryColor
-                        font {
-                            pixelSize: Theme.fontSizeSmall
-                            family: Theme.fontFamily
-                        }
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        z: 100
                     }
                 }
             }
@@ -284,7 +248,7 @@ InputHandler {
                         color: (background.down || (index === 0 && xt9CpModel.inputString.length > 0))
                                ? Theme.highlightColor : Theme.primaryColor
                         font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-                        text: model.text
+                        text: isSimplified ? model.text : opencc.convert(model.text)
                         wrapMode: Text.Wrap
                         maximumLineCount: 2
                     }
@@ -330,6 +294,14 @@ InputHandler {
                     height: parent.height
                     width: verticalContainer.inactivePadding
                     anchors.right: parent.right
+                }
+
+                TopBarGlyphKey {
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                        rightMargin: Theme.paddingMedium
+                    }
                 }
             }
         }
@@ -397,7 +369,7 @@ InputHandler {
                             x: Theme.paddingMedium
                             color: gridItemBackground.down ? Theme.highlightColor : Theme.primaryColor
                             font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-                            text: model.text
+                            text: isSimplified ? model.text : opencc.convert(model.text)
                         }
                     }
                 }
@@ -454,6 +426,9 @@ InputHandler {
     }
 
     function selectPhrase(phrase, index) {
+        if (!isSimplified) {
+            phrase = opencc.convert(phrase)
+        }
         console.log("phrase clicked: " + phrase)
         MInputMethodQuick.sendCommit(phrase)
         xt9CpModel.acceptPhrase(index)
