@@ -45,7 +45,7 @@ Item {
             verticalCenter: switchbg.verticalCenter
             horizontalCenter: switchbg.horizontalCenter
         }
-        text: (layoutRow.layout.inputMode === "traditional" ? "繁" : "简")
+        text: (layoutRow.layout.inputMode === "traditional" ? "简" : "繁")
         maximumLineCount: 1
         color: switchButton.pressed ? Theme.highlightColor : Theme.primaryColor
         font {
