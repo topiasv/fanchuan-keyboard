@@ -38,5 +38,6 @@ rm -rf %{buildroot}
 /usr/share/maliit/plugins/com/jolla/layouts/zh_cnt_pinyin.qml
 /usr/share/maliit/plugins/com/jolla/layouts/fanchuan/Xt9CpMultiInputHandler.qml
 /usr/share/maliit/plugins/com/jolla/layouts/fanchuan/SetGlyphKey.qml
+/usr/share/maliit/plugins/com/jolla/layouts/fanchuan/TopBarGlyphKey.qml
 
 %changelog
