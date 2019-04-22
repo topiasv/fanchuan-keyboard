@@ -3,12 +3,28 @@ import com.meego.maliitquick 1.0
 import Sailfish.Silica 1.0
 import com.jolla.keyboard 1.0
 import H.H.chewing 1.0
+import net.toxip.openccqml 1.0
+import "../.."
 
 InputHandler {
+    property string inputMode: layoutRow.layout ? layoutRow.layout.inputMode : ""
     property string preedit
     property var candidateGroup
     property string candidateString
     property var candidates: ListModel { }
+    property bool glyphSwap: true
+
+    OpenCC {
+        id: opencc
+
+        Component.onCompleted: opencc.chooseMode("tw2s")
+    }
+
+    Connections {
+        target: layoutRow.layout
+        onInputModeChanged: updateCandidates()
+    }
+
     Chewing {
         id:chewing
     }
@@ -21,8 +37,9 @@ InputHandler {
                     id: listView
                     model: candidates
                     orientation: ListView.Horizontal
-                    width: topItem.width
+                    width: topItem.width - switchGlyphKey.width
                     height: topItem.height
+                    clip: true
                     boundsBehavior: !keyboard.expandedPaste && Clipboard.hasText ? Flickable.DragOverBounds : Flickable.StopAtBounds
                     header: pasteComponent
                     delegate: BackgroundItem {
@@ -66,6 +83,10 @@ InputHandler {
                         interval: 10
                         onTriggered: listView.positionViewAtBeginning()
                     }
+                }
+
+                TopBarGlyphKey {
+                    id: switchGlyphKey
                 }
             }
         }
@@ -149,6 +170,16 @@ InputHandler {
                         interval: 1000
                     }
                 }
+
+                TopBarGlyphKey {
+                    id: verticalGlyphKey
+                    width: Theme.itemSizeSmall
+                    height: width * 0.9
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
+                }
             }
         }
     function handleKeyClick() {
@@ -211,12 +242,21 @@ InputHandler {
                     if (candidateGroup[i] === "") {
                         continue
                     }
-                    candidates.append({text: candidateGroup[i]})
+
+                    candidates.append({
+                        text: inputMode === "simplified"
+                            ? opencc.convert(candidateGroup[i])
+                            : candidateGroup[i]
+                    })
                 }
             }
         }
         
-        MInputMethodQuick.sendPreedit(preedit);  
+        MInputMethodQuick.sendPreedit(
+            inputMode === "simplified"
+                ? opencc.convert(preedit)
+                : preedit
+        )  
     }
 
     function reset(){
