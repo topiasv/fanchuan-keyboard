@@ -1,5 +1,5 @@
 Name: fanchuan-keyboard
-Version: 0.0.1
+Version: 0.1.0
 Release: 1%{?dist}
 Summary: A Chinese keyboard suite for Sailfish OS
 License: LGPL2.1
@@ -38,5 +38,6 @@ rm -rf %{buildroot}
 /usr/share/maliit/plugins/com/jolla/layouts/zh_cnt_pinyin.qml
 /usr/share/maliit/plugins/com/jolla/layouts/fanchuan/Xt9CpMultiInputHandler.qml
 /usr/share/maliit/plugins/com/jolla/layouts/fanchuan/SetGlyphKey.qml
+/usr/share/maliit/plugins/com/jolla/layouts/fanchuan/TopBarGlyphKey.qml
 
 %changelog
