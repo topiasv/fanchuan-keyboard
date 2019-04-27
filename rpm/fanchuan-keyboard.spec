@@ -35,9 +35,12 @@ rm -rf %{buildroot}
 %files
 /usr/share/maliit/plugins/com/jolla/layouts/fanchuan.conf
 /usr/share/maliit/plugins/com/jolla/layouts/zh_pinyin_plus.qml
+/usr/share/maliit/plugins/com/jolla/layouts/zh_zhuyin_plus.qml
 /usr/share/maliit/plugins/com/jolla/layouts/zh_cnt_pinyin.qml
 /usr/share/maliit/plugins/com/jolla/layouts/fanchuan/Xt9CpMultiInputHandler.qml
+/usr/share/maliit/plugins/com/jolla/layouts/fanchuan/ChewingMultiInputHandler.qml
 /usr/share/maliit/plugins/com/jolla/layouts/fanchuan/SetGlyphKey.qml
 /usr/share/maliit/plugins/com/jolla/layouts/fanchuan/TopBarGlyphKey.qml
+/usr/share/maliit/plugins/com/jolla/layouts/fanchuan/ZhuKey.qml
 
 %changelog
