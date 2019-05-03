@@ -13,6 +13,7 @@ InputHandler {
     property string candidateString
     property var candidates: ListModel { }
     property bool glyphSwap: true
+    property bool isSimplified: inputMode === "simplified"
 
     OpenCC {
         id: opencc
@@ -213,6 +214,10 @@ InputHandler {
 
 
     function commit(text) {
+        if (isSimplified) {
+            text = opencc.convert(text)
+        }
+        
         MInputMethodQuick.sendCommit(text)
         reset()
     }
@@ -244,7 +249,7 @@ InputHandler {
                     }
 
                     candidates.append({
-                        text: inputMode === "simplified"
+                        text: isSimplified
                             ? opencc.convert(candidateGroup[i])
                             : candidateGroup[i]
                     })
@@ -252,11 +257,7 @@ InputHandler {
             }
         }
         
-        MInputMethodQuick.sendPreedit(
-            inputMode === "simplified"
-                ? opencc.convert(preedit)
-                : preedit
-        )  
+        sendPreedit(preedit)  
     }
 
     function reset(){
@@ -264,5 +265,13 @@ InputHandler {
         chewing.handleReset()
         chewing.handleBackSpace()
         preedit = ""
+    }
+
+    function sendPreedit(inputString) {
+        if (isSimplified) {
+            inputString = opencc.convert(inputString)
+        }
+        
+        MInputMethodQuick.sendPreedit(inputString)
     }
 }

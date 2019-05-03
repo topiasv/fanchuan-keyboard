@@ -12,7 +12,7 @@ InputHandler {
     id: handler
 
     property string inputMode: layoutRow.layout ? layoutRow.layout.inputMode : ""
-    property bool isSimplified: inputMode === "simplified"
+    property bool isTraditional: inputMode === "traditional"
 
     OpenCC {
         id: opencc
@@ -133,7 +133,7 @@ InputHandler {
                             color: (backGround.down || (index === 0 && xt9CpModel.inputString.length > 0))
                                    ? Theme.highlightColor : Theme.primaryColor
                             font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-                            text: isSimplified ? model.text : opencc.convert(model.text)
+                            text: isTraditional ? opencc.convert(model.text) : model.text 
                         }
                     }
                     onDraggingChanged: {
@@ -211,7 +211,7 @@ InputHandler {
 
                         onClicked: {
                             if (xt9CpModel.inputString.length > 0) {
-                                MInputMethodQuick.sendCommit(xt9CpModel.inputString)
+                                sendCommit(xt9CpModel.inputString)
                                 xt9CpModel.resetState()
                             }
                             MInputMethodQuick.sendCommit(Clipboard.text)
@@ -254,7 +254,7 @@ InputHandler {
                         color: (background.down || (index === 0 && xt9CpModel.inputString.length > 0))
                                ? Theme.highlightColor : Theme.primaryColor
                         font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-                        text: isSimplified ? model.text : opencc.convert(model.text)
+                        text: isTraditional ? opencc.convert(model.text) : model.text
                         wrapMode: Text.Wrap
                         maximumLineCount: 2
                     }
@@ -316,7 +316,7 @@ InputHandler {
 
     onComposingEnabledChanged: {
         if (xt9CpModel.inputString.length > 0) {
-            MInputMethodQuick.sendCommit(xt9CpModel.inputString)
+            sendCommit(xt9CpModel.inputString)
             xt9CpModel.resetState()
         }
     }
@@ -376,7 +376,7 @@ InputHandler {
                             x: Theme.paddingMedium
                             color: gridItemBackground.down ? Theme.highlightColor : Theme.primaryColor
                             font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-                            text: isSimplified ? model.text : opencc.convert(model.text)
+                            text: isTraditional ? opencc.convert(model.text) : model.text
                         }
                     }
                 }
@@ -403,7 +403,7 @@ InputHandler {
             visible: Clipboard.hasText
             onClicked: {
                 if (xt9CpModel.inputString.length > 0) {
-                    MInputMethodQuick.sendCommit(xt9CpModel.inputString)
+                    sendCommit(xt9CpModel.inputString)
                     xt9CpModel.resetState()
                 }
                 MInputMethodQuick.sendCommit(Clipboard.text)
@@ -433,14 +433,11 @@ InputHandler {
     }
 
     function selectPhrase(phrase, index) {
-        if (!isSimplified) {
-            phrase = opencc.convert(phrase)
-        }
         console.log("phrase clicked: " + phrase)
-        MInputMethodQuick.sendCommit(phrase)
+        sendCommit(phrase)
         xt9CpModel.acceptPhrase(index)
         if (xt9CpModel.inputString.length > 0 && !xt9CpModel.strokeInput) {
-            MInputMethodQuick.sendPreedit(xt9CpModel.inputString)
+            sendPreedit(xt9CpModel.inputString)
         }
     }
 
@@ -459,18 +456,18 @@ InputHandler {
             if (xt9CpModel.inputString.length > 0) {
                 var candidate = xt9CpModel.firstCandidate()
                 if (candidate.length > 0) {
-                    MInputMethodQuick.sendCommit(candidate)
+                    sendCommit(candidate)
                     xt9CpModel.acceptPhrase(0)
                     if (!xt9CpModel.strokeInput && xt9CpModel.inputString.length > 0) {
                         // send remaining input string
-                        MInputMethodQuick.sendPreedit(xt9CpModel.inputString)
+                        sendPreedit(xt9CpModel.inputString)
                     }
 
                     return true
                 }
 
                 if (!xt9CpModel.strokeInput) {
-                    MInputMethodQuick.sendCommit(xt9CpModel.inputString)
+                    sendCommit(xt9CpModel.inputString)
                 }
                 xt9CpModel.resetState()
                 return true
@@ -479,7 +476,7 @@ InputHandler {
         } else if (pressedKey.key === Qt.Key_Return) {
             if (xt9CpModel.inputString.length > 0) {
                 if (!xt9CpModel.strokeInput) {
-                    MInputMethodQuick.sendCommit(xt9CpModel.inputString)
+                    sendCommit(xt9CpModel.inputString)
                 }
                 xt9CpModel.resetState()
                 return true
@@ -489,7 +486,7 @@ InputHandler {
             if (xt9CpModel.inputString.length > 0) {
                 xt9CpModel.processBackspace()
                 if (!xt9CpModel.strokeInput) {
-                    MInputMethodQuick.sendPreedit(xt9CpModel.inputString)
+                    sendPreedit(xt9CpModel.inputString)
                 }
 
                 if (keyboard.shiftState !== ShiftState.LockedShift) {
@@ -515,18 +512,18 @@ InputHandler {
             if (processSymbol) {
                 if (xt9CpModel.processSymbol(pressedKey.text)) {
                     if (!xt9CpModel.strokeInput) {
-                        MInputMethodQuick.sendPreedit(xt9CpModel.inputString)
+                        sendPreedit(xt9CpModel.inputString)
                     }
                 } else {
                     // something went wrong
-                    MInputMethodQuick.sendCommit(xt9CpModel.inputString + pressedKey.text)
+                    sendCommit(xt9CpModel.inputString + pressedKey.text)
                     xt9CpModel.resetState()
                 }
             } else {
                 if (xt9CpModel.strokeInput) {
-                    MInputMethodQuick.sendCommit(pressedKey.text)
+                    sendCommit(pressedKey.text)
                 } else {
-                    MInputMethodQuick.sendCommit(xt9CpModel.inputString + pressedKey.text)
+                    sendCommit(xt9CpModel.inputString + pressedKey.text)
                 }
 
                 xt9CpModel.resetState()
@@ -560,23 +557,25 @@ InputHandler {
 
         if (xt9CpModel.inputString.length > 0) {
             if (!xt9CpModel.strokeInput) {
-                MInputMethodQuick.sendCommit(xt9CpModel.inputString)
+                sendCommit(xt9CpModel.inputString)
             }
             xt9CpModel.resetState()
         }
     }
 
-    //A hack that forces the candidates to refresh to changed character set
-    function refreshCandidates() {
-        //store inputString temporarily
-        var tmpStr = xt9CpModel.inputString
-        MInputMethodQuick.sendCommit("")
-        xt9CpModel.resetState()
-        //dirty loop to reprocess the inputString
-        for (var i = 0; i < tmpStr.length; i++) {
-            xt9CpModel.processSymbol(tmpStr.charAt(i))
+    function sendCommit(inputString) {
+        if (isTraditional) {
+            inputString = opencc.convert(inputString)
         }
-        //make sure the preedit is updated
-        MInputMethodQuick.sendPreedit(tmpStr)
+        
+        MInputMethodQuick.sendCommit(inputString)
+    }
+
+    function sendPreedit(inputString) {
+        if (isTraditional) {
+            inputString = opencc.convert(inputString)
+        }
+        
+        MInputMethodQuick.sendPreedit(inputString)
     }
 }
